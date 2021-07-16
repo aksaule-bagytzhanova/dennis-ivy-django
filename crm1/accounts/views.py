@@ -6,7 +6,7 @@ from django.contrib.auth.forms import UserCreationForm
 from .forms import OrderForm
 from .filters import OrderFilter
 
-# Create your views here.
+
 def registerPage(request):
     form = UserCreationForm()
     context = {'form': form}
@@ -32,12 +32,15 @@ def home(request):
 
     return render(request, 'accounts/dashboard.html', context)
 
+
 def products(request):
     products = Product.objects.all()
 
     return render(request, 'accounts/products.html', {'products': products})
 
+
 def customer(request, pk_test):
+
     customer = Customer.objects.get(id=pk_test)
 
     orders = customer.order_set.all()
@@ -46,9 +49,10 @@ def customer(request, pk_test):
     myFilter = OrderFilter(request.GET, queryset=orders)
     orders = myFilter.qs
     
-    context = {'customer':customer,'orders':orders,'order_count':order_count,
+    context = {'customer': customer, 'orders': orders, 'order_count':order_count,
     'myFilter': myFilter}
     return render(request, 'accounts/customer.html',context)
+
 
 def createOrder(request, pk):
     OrderFormSet = inlineformset_factory(Customer, Order, fields=('product','status'), extra=10)
@@ -66,6 +70,7 @@ def createOrder(request, pk):
     context = {'formset': formset}
     return render(request, 'accounts/order_form.html', context)
 
+
 def updateOrder(request, pk):
     order = Order.objects.get(id=pk)
     form = OrderForm(instance=order)
@@ -76,6 +81,7 @@ def updateOrder(request, pk):
             return redirect('/')
     context = {'form':form}
     return render(request, 'accounts/order_form.html', context)
+
 
 def deleteOrder(request, pk):
     order = Order.objects.get(id=pk)
