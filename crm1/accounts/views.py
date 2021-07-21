@@ -28,6 +28,9 @@ def registerPage(request):
 
             group = Group.objects.get(name='customer')
             user.group.add(group)
+            Customer.objects.create(
+                user=user,
+            )
 
             messages.success(request, 'Account was created for ' + username)
 
@@ -78,6 +81,7 @@ def home(request):
 @allowed_users(allowed_roles=['admin'])
 def products(request):
     products = Product.objects.all()
+
 
     return render(request, 'accounts/products.html', {'products': products})
 
@@ -141,7 +145,18 @@ def deleteOrder(request, pk):
     context = {'item':order}
     return render(request, 'accounts/delete.html', context)
 
-
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['customer'])
 def userPage(request):
-    context = {}
+    orders = request.user.customer.order_set.all()
+
+    total_orders = orders.count()
+    delivered = orders.filter(status='Delivered').count()
+    pending = orders.filter(status='Pending').count()
+
+    print('ORDERS:', orders)
+
+    context = {'orders':orders, 'delivered':delivered,
+               'total_orders':total_orders, 'pending':pending}
+
     return render(request, 'accounts/products.html', context)
