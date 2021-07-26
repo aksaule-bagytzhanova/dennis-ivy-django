@@ -67,7 +67,7 @@ def home(request):
     delivered = orders.filter(status='Delivered').count()
     pending = orders.filter(status='Pending').count()
 
-    context = {'orders':orders, 'customers':customers, 'total_customers':total_customers, 'delivered':delivered, 'total_orders':total_orders, 'pending':pending}
+    context = {'orders':orders, 'customers':customers, 'total_orders':total_orders, 'delivered':delivered, 'pending':pending}
 
     return render(request, 'accounts/dashboard.html', context)
 
@@ -119,7 +119,7 @@ def updateOrder(request, pk):
 
     order = Order.objects.get(id=pk)
     form = OrderForm(instance=order)
-
+    print('ORDER:', order)
     if request.method == 'POST':
         form = OrderForm(request.POST, instance=order)
         if form.is_valid():
@@ -153,7 +153,7 @@ def userPage(request):
     context = {'orders':orders, 'delivered':delivered,
                'total_orders':total_orders, 'pending':pending}
 
-    return render(request, 'accounts/products.html', context)
+    return render(request, 'accounts/user.html', context)
 
 
 @login_required(login_url='login')
