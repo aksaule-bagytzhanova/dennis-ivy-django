@@ -2,19 +2,16 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.forms import inlineformset_factory
 from django.contrib.auth.forms import UserCreationForm
-
 from django.contrib.auth import authenticate, login, logout
-
+from django.shortcuts import get_object_or_404
 from django.contrib import messages
-
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import Group
-
 # Create your views here.
 from .models import *
 from .forms import OrderForm, CreateUserForm, CustomerForm
 from .filters import OrderFilter
 from .decorators import unauthenticated_user, allowed_users, admin_only
+
 
 @unauthenticated_user
 def registerPage(request):
@@ -32,6 +29,7 @@ def registerPage(request):
 
     context = {'form': form}
     return render(request, 'accounts/register.html', context)
+
 
 @unauthenticated_user
 def loginPage(request):
@@ -55,6 +53,7 @@ def logoutUser(request):
     logout(request)
     return redirect('login')
 
+
 @login_required(login_url='login')
 @admin_only
 def home(request):
@@ -71,6 +70,7 @@ def home(request):
 
     return render(request, 'accounts/dashboard.html', context)
 
+
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def products(request):
@@ -78,6 +78,7 @@ def products(request):
 
 
     return render(request, 'accounts/products.html', {'products': products})
+
 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
@@ -94,6 +95,7 @@ def customer(request, pk_test):
     context = {'customer': customer, 'orders': orders, 'order_count':order_count,
     'myFilter': myFilter}
     return render(request, 'accounts/customer.html', context)
+
 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
@@ -113,6 +115,7 @@ def createOrder(request, pk):
     context = {'form': formset}
     return render(request, 'accounts/order_form.html', context)
 
+
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def updateOrder(request, pk):
@@ -128,6 +131,7 @@ def updateOrder(request, pk):
     context = {'form':form}
     return render(request, 'accounts/order_form.html', context)
 
+
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def deleteOrder(request, pk):
@@ -138,6 +142,7 @@ def deleteOrder(request, pk):
 
     context = {'item':order}
     return render(request, 'accounts/delete.html', context)
+
 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['customer'])
